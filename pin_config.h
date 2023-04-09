@@ -40,3 +40,12 @@
 
 #define PIN_TOUCH_INT                16
 #define PIN_TOUCH_RES                21
+
+/* LCD CONFIG */
+// Too low or too high pixel clock may cause screen mosaic
+#define EXAMPLE_LCD_PIXEL_CLOCK_HZ   (16 * 1000 * 1000)
+// The pixel number in horizontal and vertical
+#define EXAMPLE_LCD_H_RES            320
+#define EXAMPLE_LCD_V_RES            170
+#define LVGL_LCD_BUF_SIZE            (EXAMPLE_LCD_H_RES * EXAMPLE_LCD_V_RES)
+#define EXAMPLE_PSRAM_DATA_ALIGNMENT 64

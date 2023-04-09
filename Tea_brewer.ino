@@ -1,15 +1,14 @@
 #include "Arduino.h"
 #include "TFT_eSPI.h"
 #include "pin_config.h"
+#include "bachi_driver.h"
 
+#include "lvgl.h"      /* https://github.com/lvgl/lvgl.git */
 
 bool button_ok_state = false;
 bool button_cancel_state = false;
 bool button_prev_state = false;
 bool button_next_state = false;
-
-TFT_eSPI tft = TFT_eSPI();
-
 
 int sek10 = 0;
 
@@ -28,34 +27,8 @@ void setup() {
 
     digitalWrite(PIN_SOLENOID_ENABLE, LOW);
 
-    tft.begin();
-
-#if defined(LCD_MODULE_CMD_1)
-    for (uint8_t i = 0; i < (sizeof(lcd_st7789v) / sizeof(lcd_cmd_t)); i++) {
-        tft.writecommand(lcd_st7789v[i].cmd);
-        for (int j = 0; j < lcd_st7789v[i].len & 0x7f; j++) {
-            tft.writedata(lcd_st7789v[i].data[j]);
-        }
-
-        if (lcd_st7789v[i].len & 0x80) {
-            delay(120);
-        }
-    }
-#endif
-
-    tft.setRotation(1);
-    tft.setSwapBytes(true);
-
-    delay(2000);
-
-    ledcSetup(0, 2000, 8);
-    ledcAttachPin(PIN_LCD_BL, 0);
-    ledcWrite(0, 255);
-
-    // First we test them with a background colour set
-    tft.setTextSize(1);
-    tft.fillScreen(TFT_BLACK);
-    tft.setTextColor(TFT_GREEN, TFT_BLACK);
+    Serial.print("1");
+    bachi_setup_display();
 }
 
 void check_press(int pin, bool *state, const char *name) {
@@ -71,6 +44,9 @@ void check_press(int pin, bool *state, const char *name) {
 }
 
 void loop() {
+  
+  bachi_loop_display();
+
   int gpio13Read = digitalRead(PIN_BUTTON_NEXT);
   if (gpio13Read) {
     digitalWrite(PIN_SOLENOID_ENABLE, HIGH);
@@ -88,9 +64,10 @@ void loop() {
   if (temp > sek10) {
     Serial.print(".");
     sek10 = temp;
-    tft.drawNumber(sek10, 30, 10, 8);
+    //tft.drawNumber(sek10, 30, 10, 8);
   }
   
+    bachi_loop_display();
     
-    tft.drawString("Hello world", 0, 16, 2);
+    //tft.drawString("Hello world", 0, 16, 2);
 }
