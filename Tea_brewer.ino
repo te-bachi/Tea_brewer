@@ -1,7 +1,8 @@
 #include "Arduino.h"
-#include "TFT_eSPI.h"
+
 #include "pin_config.h"
 #include "bachi_driver.h"
+#include "Tea_brewer.h"
 
 #include "lvgl.h"      /* https://github.com/lvgl/lvgl.git */
 
@@ -12,6 +13,14 @@ bool button_next_state = false;
 
 int sek10 = 0;
 
+
+PrevButton        prevButton;
+NextButton        nextButton;
+CancelButton      cancelButton;
+OkButton          okButton;
+
+CountdownTimer    countdownTimer;
+
 void setup() {
     pinMode(PIN_POWER_ON, OUTPUT); // to boot with battery...
     digitalWrite(PIN_POWER_ON, HIGH);  // and/or power from 5v rail instead of USB
@@ -20,10 +29,6 @@ void setup() {
     Serial.println("Hello world!");
 
     pinMode(PIN_SOLENOID_ENABLE, OUTPUT);
-    pinMode(PIN_BUTTON_OK, INPUT);
-    pinMode(PIN_BUTTON_CANCEL, INPUT);
-    pinMode(PIN_BUTTON_PREV, INPUT);
-    pinMode(PIN_BUTTON_NEXT, INPUT);
 
     digitalWrite(PIN_SOLENOID_ENABLE, LOW);
 
@@ -47,6 +52,14 @@ void loop() {
   
   bachi_loop_display();
 
+  prevButton.checkPin();
+  nextButton.checkPin();
+  cancelButton.checkPin();
+  okButton.checkPin();
+
+  countdownTimer.loop();
+  
+  /*
   int gpio13Read = digitalRead(PIN_BUTTON_NEXT);
   if (gpio13Read) {
     digitalWrite(PIN_SOLENOID_ENABLE, HIGH);
@@ -70,4 +83,5 @@ void loop() {
     bachi_loop_display();
     
     //tft.drawString("Hello world", 0, 16, 2);
+    */
 }
